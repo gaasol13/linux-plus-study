@@ -1,0 +1,27 @@
+=== Unit 5 Project: Automated Configuration Backup & Integrity System ===
+
+Backup Date:        2026-05-11 20:15:47
+Hostname:           gs-VirtualBox
+Archive Name:       config_backup_2026-05-11%H1547.tar.gz
+Archive Size:       8.0K
+Compression:        gzip
+Checksum Algorithm: SHA-256
+Checksum File:      config_backup_2026-05-11%H1547.sha256
+
+--- Files Archived ---
+tar: Removing leading `/' from member names
+/etc/hostname
+/etc/hosts
+/etc/fstab
+/etc/passwd
+/etc/group
+/etc/ssh/sshd_config
+/etc/crontab
+
+--- Warnings ---
+  /etc/sudoers - skipped (permission denied)
+
+--- Verification ---
+  Result: PASSED
+
+=== End of Manifest ===
