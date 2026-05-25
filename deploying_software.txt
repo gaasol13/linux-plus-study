@@ -1,0 +1,127 @@
+# PACKAGE LIFECYCLE OPERATIONS
+ 
+# Package Management Architecture
+
+There are two major packaging ecosystems on Linux:
+Debian/Ubuntu — APT stack
+
+	.deb is the binary package format
+	dpkg is the low-level tool — installs, removes, and queries .deb files directly, but does not resolve dependencies automatically
+	apt / apt-get is the high-level frontend — resolves dependencies, fetches from repos, manages upgrades
+	Repository configuration lives in /etc/apt/sources.list and /etc/apt/sources.list.d/
+	Package cache: /var/cache/apt/archives/
+
+RHEL/Rocky — DNF stack
+
+	.rpm is the binary package format
+	rpm is the low-level tool — same limitation as dpkg, no automatic dependency resolution
+	dnf is the high-level frontend (replaced yum)
+	Repository configuration: /etc/yum.repos.d/*.repo
+	DNF supports modules and streams for managing multiple software versions
+
+# Key architectural insight: 
+
+	The low-level tools (dpkg, rpm) work with packages in isolation. 
+	The high-level tools (apt, dnf) understand the dependency graph and interact with repositories. 
+
+	Exam questions often test whether you know which layer to use for a given task.
+
+ACTION			APT(DEBIAN)		DNF(RHEL/ROCKY)
+
+Install			apt install		dnf install
+Remove (keep config)	apt remove		dnf remove
+Remove (purge config)	apt purge		dnf remove
+Update metadata		apt update		dnf check-update
+Update packages		apt upgrade		dnf upgrade
+Search			apt search		dnf search
+Package info		apt show		dnf info
+List installed		dpkg -l			rpm -qa
+What owns a file	dpkg -S /path		rpm -qf /path
+List package files	dpek -L pkgname		rpm -ql pkgname 
+
+
+# REPOSITORY MANAGEMENT
+
+DEBIAN/UBUNTU:
+/etc/apt/sources.list -> primary repo list
+
+
+Debian/Ubuntu:
+
+/etc/apt/sources.list — primary repo list
+/etc/apt/sources.list.d/*.list — drop-in repo files (preferred for third-party repos)
+add-apt-repository — adds PPAs and external repos
+GPG keys authenticate repos: apt-key add (deprecated) → gpg --dearmor to /etc/apt/trusted.gpg.d/
+After adding a repo, always run apt update before installing
+
+RHEL/Rocky:
+
+/etc/yum.repos.d/*.repo — repo configuration files
+Key fields: [repo-id], name=, baseurl= or mirrorlist=, enabled=, gpgcheck=, gpgkey=
+dnf config-manager --add-repo or dnf config-manager --enable/--disable
+EPEL (Extra Packages for Enterprise Linux) is the most commonly referenced third-party repo
+
+Common repo troubleshooting points:
+
+Mismatched GPG key → package authentication failure
+Wrong baseurl → repo metadata fetch failure
+enabled=0 → repo silently excluded
+Expired repo metadata cache → stale results
+
+
+# Dependency Troubleshooting
+Dependency hell manifests in several ways:
+
+	Broken package state — partially installed package blocking further operations (dpkg --configure -a to repair)
+	Conflicting packages — two packages require mutually exclusive versions of a shared library
+	Missing dependency — package requires something not in configured repos
+	Held packages — apt-mark hold or dnf versionlock freezing a package version
+
+Diagnostic commands:
+
+	apt-cache depends <pkg> / apt-cache rdepends <pkg>
+	dnf deplist <pkg>
+	apt --fix-broken install
+	dpkg --audit
+
+
+# Sandboxed Package Formats
+	These exist to solve the dependency and distribution problem by bundling all dependencies with the application itself:
+
+# Snap:
+
+	Developed by Canonical
+	Managed by snapd daemon
+	Packages called snaps; distributed via Snap Store
+	Self-contained, mounted as squashfs loop devices
+	Automatic background updates
+	Confinement model controls access to system resources
+	snap install, snap list, snap info, snap remove
+	Snap data: /var/snap/, /snap/
+
+# Flatpak:
+
+	Cross-distribution, Red Hat-backed
+	Runtime-based: apps share base runtimes (e.g., GNOME, KDE, freedesktop)
+	Repos called remotes; most common is Flathub
+	flatpak install, flatpak run, flatpak list, flatpak remote-add
+	Permissions managed via portals and overrides: flatpak override
+	Data stored in ~/.local/share/flatpak/ (user installs) or /var/lib/flatpak/ (system installs)
+
+# AppImage:
+
+	Single executable file, no installation required
+	No daemon, no package manager — just download, chmod +x, execute
+	Least integrated, most portable
+
+	Key exam distinction: Snap uses a daemon (snapd). Flatpak does not — it's purely a CLI tool and runtime layer. AppImage requires no infrastructure at all.
+
+# Language-Specific Package Managers
+
+	These operate alongside system package managers and manage libraries within a specific language ecosystem:
+	LanguageToolInstall location (typical)Pythonpipsystem site-packages or virtualenvNode.jsnpmnode_modules/Rubygemgem pathRustcargo~/.cargo/
+	Operational concern: Language package managers bypass system package management. Libraries installed via pip won't show up in dpkg -l. This creates dependency conflicts when mixing system and language-level packages — hence the recommendation for virtual environments (python3 -m venv).
+
+
+
+

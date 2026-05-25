@@ -1,0 +1,5 @@
+Mesa	org.freedesktop.Platform.GL.default	26.0.6	25.08	system
+Mesa (Extra)	org.freedesktop.Platform.GL.default	26.0.6	25.08-extra	system
+Codecs Extra Extension	org.freedesktop.Platform.codecs-extra		25.08-extra	system
+Calculator	org.gnome.Calculator	50.0	stable	system
+GNOME Application Platform version 50	org.gnome.Platform		50	system

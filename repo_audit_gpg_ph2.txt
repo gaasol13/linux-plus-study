@@ -1,0 +1,55 @@
+==== Repository audit & GPG verification ====
+
+
+Types: deb
+URIs: http://archive.ubuntu.com/ubuntu/
+Suites: noble noble-updates noble-backports
+Components: main restricted universe multiverse
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+
+Types: deb
+URIs: http://security.ubuntu.com/ubuntu/
+Suites: noble-security
+Components: main restricted universe multiverse
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+
+
+Types: deb deb-src
+URIs: https://apt.postgresql.org/pub/repos/apt
+Suites: noble-pgdg
+Architectures: amd64
+Components: main
+Signed-By: /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
+
+
+
+==== Result after changing the pgdg.sources repo ====
+Hit:1 http://archive.ubuntu.com/ubuntu noble InRelease
+Hit:2 http://security.ubuntu.com/ubuntu noble-security InRelease
+Hit:3 http://archive.ubuntu.com/ubuntu noble-updates InRelease
+Get:4 https://apt.postgresql.org/pub/repos/apt noble-pgdg InRelease [180 kB]
+Hit:5 http://archive.ubuntu.com/ubuntu noble-backports InRelease
+Get:6 https://apt.postgresql.org/pub/repos/apt noble-pgdg/main Sources [99.2 kB]
+Get:7 https://apt.postgresql.org/pub/repos/apt noble-pgdg/main amd64 Packages [542 kB]
+Fetched 641 kB in 1s (649 kB/s)
+Reading package lists...
+Building dependency tree...
+Reading state information...
+12 packages can be upgraded. Run 'apt list --upgradable' to see them.
+==== Audit file ====
+
+==== Audit file ====
+
+Use apt-cache policy postgresql-16 to shows which repo postgressql-16 actually came from and version available
+
+
+==== PGDP Repo fix ====
+Types: deb deb-src
+URIs: https://apt.postgresql.org/pub/repos/apt
+Suites: noble-pgdg
+Architectures: amd64
+Components: main
+Signed-By: /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
+
+
+==== PGDP Repo fix change sudo====
